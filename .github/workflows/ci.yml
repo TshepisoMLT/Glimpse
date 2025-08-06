@@ -1,0 +1,226 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '18'
+  EXPO_VERSION: 'latest'
+
+jobs:
+  # Lint and Type Check
+  lint-and-typecheck:
+    name: Lint and Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npx eslint . --ext .js,.jsx,.ts,.tsx
+
+      - name: Run TypeScript type check
+        run: npx tsc --noEmit
+
+      - name: Check package.json scripts
+        run: npm run --silent
+
+  # Test (if you add tests later)
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests (placeholder)
+        run: echo "Tests will be added here"
+        # Uncomment when you add tests:
+        # run: npm test
+
+  # Security audit
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security audit
+        run: npm audit --audit-level=moderate
+
+  # Build check
+  build-check:
+    name: Build Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Expo CLI
+        run: npm install -g @expo/cli
+
+      - name: Check Expo configuration
+        run: npx expo-doctor
+
+      - name: Validate app.json
+        run: npx expo config --type public
+
+  # EAS Build (for main branch only)
+  eas-build:
+    name: EAS Build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install EAS CLI
+        run: npm install -g @expo/eas-cli
+
+      - name: Login to Expo
+        run: |
+          echo ${{ secrets.EXPO_TOKEN }} | eas login --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build for Android (Development)
+        run: eas build --platform android --profile development --non-interactive
+
+      - name: Build for Android (Preview)
+        run: eas build --platform android --profile preview --non-interactive
+
+  # Deploy to Expo (for main branch only)
+  deploy-expo:
+    name: Deploy to Expo
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Expo CLI
+        run: npm install -g @expo/cli
+
+      - name: Login to Expo
+        run: |
+          echo ${{ secrets.EXPO_TOKEN }} | expo login --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Publish to Expo
+        run: expo publish --non-interactive
+
+  # Dependency updates (weekly)
+  dependency-updates:
+    name: Check for Dependency Updates
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for outdated packages
+        run: npm outdated
+
+      - name: Create issue for updates
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: ['dependencies']
+            });
+            
+            if (issues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: '📦 Dependency Updates Available',
+                body: `## Dependency Updates Check
+                
+                This issue was automatically created to remind you to check for dependency updates.
+                
+                ### To check for updates:
+                1. Run \`npm outdated\` to see outdated packages
+                2. Run \`npm update\` to update packages within version constraints
+                3. Run \`npm audit fix\` to fix security vulnerabilities
+                
+                ### Manual steps:
+                - Review each outdated package
+                - Test the app after updates
+                - Update this issue when resolved
+                
+                ---
+                *This issue was created by GitHub Actions*`,
+                labels: ['dependencies', 'automation']
+              });
+            } 
