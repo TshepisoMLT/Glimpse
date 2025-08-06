@@ -1,0 +1,160 @@
+# Glimpse React Native App - Requirements & Dependencies
+
+## Core Framework
+- expo@53.0.20 - React Native framework with Expo SDK 53
+- react@19.0.0 - React library
+- react-native@0.79.5 - React Native framework
+- typescript@~5.8.3 - TypeScript language support
+
+## State Management & HTTP
+- zustand@^4.5.0 - Lightweight state management
+- axios@^1.6.0 - HTTP client for API requests
+
+## Styling & UI
+- nativewind@^4.1.23 - Tailwind CSS for React Native
+- tailwindcss@^3.4.17 - CSS framework
+- @babel/core@^7.25.2 - Babel compiler
+- @types/react@~19.0.10 - React TypeScript definitions
+
+## Expo SDK Packages
+
+### Media & File Handling
+- expo-image-picker@~16.1.4 - Image selection from gallery/camera
+- expo-document-picker@~13.1.6 - Document file selection
+- expo-file-system@~18.1.11 - File system operations
+- expo-image@~2.4.0 - Optimized image loading
+- expo-image-manipulator@~13.1.7 - Image editing and manipulation
+- expo-video@~2.2.2 - Video playback
+- expo-video-thumbnails@~9.1.3 - Video thumbnail generation
+
+### Camera & Audio
+- expo-camera@~16.1.11 - Camera functionality
+- expo-audio@^0.4.8 - Audio recording and playback
+
+### Storage & Security
+- expo-secure-store@~14.2.3 - Secure data storage
+- expo-background-task@^0.2.8 - Background task execution
+
+### Authentication & Permissions
+- expo-local-authentication@~16.0.5 - Biometric authentication (Face ID/Touch ID)
+
+### Notifications & Communication
+- expo-notifications@^0.31.4 - Push notifications
+- expo-sharing@~13.1.5 - Content sharing
+
+### System Information
+- expo-application@~6.1.5 - App information and utilities
+- expo-asset@~11.1.7 - Asset management
+- expo-cellular@~7.1.5 - Cellular network information
+- expo-network@~7.1.5 - Network information
+- expo-navigation-bar@~4.2.7 - Navigation bar control
+
+### Contacts & Data
+- expo-contacts@~14.2.5 - Contact management
+
+### UI Effects
+- expo-blur@~14.1.5 - Blur effects
+
+## React Native Community Packages
+
+### Storage
+- @react-native-async-storage/async-storage@^2.2.0 - Local data storage
+
+### UI Components
+- @react-native-community/datetimepicker@^8.4.3 - Date and time picker
+- @react-native-community/slider@^4.5.7 - Slider component
+- @shopify/flash-list@^2.0.2 - High-performance list component
+
+### Animations & Gestures
+- lottie-react-native@^7.3.0 - Lottie animation support
+- react-native-gesture-handler@^2.27.2 - Gesture handling
+
+## Development Dependencies
+- @babel/core@^7.25.2 - Babel compiler
+- @types/react@~19.0.10 - React TypeScript definitions
+- typescript@~5.8.3 - TypeScript compiler
+
+## Configuration Files
+- app.json - Expo configuration with permissions and plugins
+- tailwind.config.js - Tailwind CSS configuration
+- babel.config.js - Babel configuration with NativeWind plugin
+- tsconfig.json - TypeScript configuration
+- global.css - Global CSS with Tailwind directives
+
+## Project Structure
+- stores/ - Zustand state management stores
+- services/ - API services and HTTP utilities
+- components/ - Reusable React components
+- types/ - TypeScript type definitions
+
+## Platform Support
+- iOS - Full support with all packages
+- Android - Full support with all packages
+- Web - Limited support (some packages may not work)
+
+## Permission Requirements
+- Camera access (expo-camera, expo-image-picker)
+- Microphone access (expo-camera, expo-audio)
+- Photo library access (expo-image-picker)
+- Contact access (expo-contacts)
+- Face ID/Touch ID (expo-local-authentication)
+- Background playback (expo-video)
+
+## Build Requirements
+- Node.js v18 or higher
+- npm or yarn package manager
+- Expo CLI
+- Android Studio (for Android development)
+- Xcode (for iOS development, macOS only)
+- EAS CLI (for cloud builds)
+
+## Development Environment
+- TypeScript strict mode enabled
+- ESLint configuration for code quality
+- Prettier for code formatting (recommended)
+- React Native Debugger for debugging
+- Flipper for advanced debugging (optional)
+
+## Testing Requirements
+- Physical devices for final testing
+- Expo Go app for quick testing
+- Android emulator for detailed debugging
+- iOS simulator (macOS only)
+- Both platforms must be tested for all features
+
+## Performance Considerations
+- Use FlashList for large lists
+- Optimize images with expo-image
+- Implement proper memory management
+- Handle background tasks appropriately
+- Use proper error boundaries
+- Implement proper loading states with Zustand
+
+## Security Requirements
+- Use SecureStore for sensitive data
+- Implement proper authentication flows
+- Handle permissions appropriately
+- Validate all user inputs
+- Secure API communications
+- Automatic token management with Axios interceptors
+
+## Accessibility Requirements
+- Support screen readers
+- Provide proper labels and descriptions
+- Ensure sufficient color contrast
+- Support different text sizes
+- Handle accessibility gestures
+
+## Internationalization
+- Support multiple languages (future requirement)
+- Handle different date/time formats
+- Support RTL languages (future requirement)
+- Use proper number formatting
+
+## Documentation Requirements
+- README.md with setup instructions
+- AI_CONTEXT.md for AI development guidance
+- Code comments for complex logic
+- TypeScript interfaces for all components
+- API documentation for custom functions
+- Store documentation for Zustand stores 
